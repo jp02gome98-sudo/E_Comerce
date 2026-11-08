@@ -1,0 +1,119 @@
+
+{% extends "Base.html" %}
+
+{% block title %}Productos | Mi Tienda{% endblock %}
+
+{% block content %}
+<section class="seccion" id="productos">
+    <div class="contenedor">
+
+        <div class="encabezado-seccion">
+            <h1>Nuestros productos</h1>
+            <p>Encuentra los productos que buscas.</p>
+        </div>
+
+        <div class="busqueda">
+            <input
+                type="search"
+                id="buscador"
+                placeholder="Buscar productos..."
+                aria-label="Buscar productos">
+        </div>
+
+        <div class="filtros">
+            <button
+                type="button"
+                class="filtro activo"
+                data-categoria="todos">
+                Todos
+            </button>
+
+            {% for category in categories %}
+                <button
+                    type="button"
+                    class="filtro"
+                    data-categoria="{{ category|lower }}">
+                    {{ category }}
+                </button>
+            {% endfor %}
+        </div>
+
+        <div class="productos-grid">
+            {% for product in products %}
+                <article
+                    class="producto"
+                    data-nombre="{{ product.name|lower }}"
+                    data-categoria="{{ product.category|lower }}">
+
+                    <div class="producto-foto">
+                        {% if product.image %}
+                            <img
+                                src="{{ url_for('static', filename='img/' + product.image) }}"
+                                alt="{{ product.name }}"
+                                loading="lazy">
+                        {% else %}
+                            <div class="imagen-placeholder">🛍️</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="producto-info">
+                        <span class="categoria">{{ product.category }}</span>
+
+                        <h2>{{ product.name }}</h2>
+
+                        <p>{{ product.description }}</p>
+
+                        <div class="producto-pie">
+                            <span class="precio">
+                                ${{ "{:,.0f}".format(product.price) }}
+                            </span>
+
+                            <span class="inventario">
+                                {% if product.stock > 0 %}
+                                    Disponibles: {{ product.stock }}
+                                {% else %}
+                                    Agotado
+                                {% endif %}
+                            </span>
+                        </div>
+
+                        {% if product.stock > 0 %}
+                            <form
+                                action="{{ url_for('main.agregar_carrito', product_id=product.id) }}"
+                                method="POST">
+
+                                <button type="submit" class="agregar">
+                                    Agregar al carrito
+                                </button>
+                            </form>
+                        {% else %}
+                            <button type="button" class="agregar" disabled>
+                                Producto agotado
+                            </button>
+                        {% endif %}
+
+                        <p>
+                            <a href="{{ url_for('main.detalle_producto', product_id=product.id) }}">
+                                Ver detalles
+                            </a>
+                        </p>
+                    </div>
+                </article>
+            {% else %}
+                <p>No hay productos disponibles por el momento.</p>
+            {% endfor %}
+        </div>
+
+        <p id="sin-resultados" class="sin-resultados oculto">
+            No se encontraron productos.
+        </p>
+
+        <div class="carrito-vacio">
+            <a href="{{ url_for('main.index') }}" class="agregar">
+                Volver al inicio
+            </a>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

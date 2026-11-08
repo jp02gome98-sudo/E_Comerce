@@ -1,0 +1,131 @@
+
+{% extends "Base.html" %}
+
+{% block title %}Mi carrito | Mi Tienda{% endblock %}
+
+{% block content %}
+<section class="seccion" id="carrito">
+    <div class="contenedor">
+
+        <div class="encabezado-seccion">
+            <h1>Mi carrito de compras</h1>
+            <p>Revisa tus productos antes de realizar la compra.</p>
+        </div>
+
+        {% if cart_items %}
+
+            <div class="carrito-tabla">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Precio</th>
+                            <th>Cantidad</th>
+                            <th>Subtotal</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for item in cart_items %}
+                            <tr>
+                                <td>{{ item.product.name }}</td>
+
+                                <td>
+                                    ${{ "{:,.0f}".format(item.product.price) }}
+                                </td>
+
+                                <td>
+                                    <form
+                                        action="{{ url_for('main.actualizar_carrito', product_id=item.product.id) }}"
+                                        method="POST"
+                                        class="cantidad-form">
+
+                                        <input
+                                            type="number"
+                                            name="cantidad"
+                                            value="{{ item.quantity }}"
+                                            min="1"
+                                            max="{{ item.product.stock }}"
+                                            required>
+
+                                        <button type="submit" class="boton-mini">
+                                            Actualizar
+                                        </button>
+                                    </form>
+                                </td>
+
+                                <td>
+                                    ${{ "{:,.0f}".format(item.subtotal) }}
+                                </td>
+
+                                <td>
+                                    <form
+                                        action="{{ url_for('main.eliminar_carrito', product_id=item.product.id) }}"
+                                        method="POST"
+                                        data-confirm="¿Deseas eliminar este producto?">
+
+                                        <button type="submit" class="eliminar">
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="compra-final">
+                <h2>Resumen de compra</h2>
+
+                <p class="total">
+                    Total:
+                    <strong>${{ "{:,.0f}".format(cart_total) }}</strong>
+                </p>
+
+                <form
+                    action="{{ url_for('main.comprar') }}"
+                    method="POST"
+                    class="form-compra">
+
+                    <label for="customer_name">Nombre completo</label>
+                    <input
+                        type="text"
+                        id="customer_name"
+                        name="customer_name"
+                        placeholder="Escribe tu nombre"
+                        required>
+
+                    <label for="customer_email">Correo electrónico</label>
+                    <input
+                        type="email"
+                        id="customer_email"
+                        name="customer_email"
+                        placeholder="ejemplo@correo.com"
+                        required>
+
+                    <button type="submit" class="boton-confirmar">
+                        Confirmar compra
+                    </button>
+                </form>
+
+                <p>Esta tienda es una demostración y no procesa pagos reales.</p>
+            </div>
+
+        {% else %}
+
+            <div class="carrito-vacio">
+                <h2>Tu carrito está vacío</h2>
+                <p>Agrega algunos productos para comenzar tu compra.</p>
+
+                <a href="{{ url_for('main.index') }}#productos" class="agregar">
+                    Ver productos
+                </a>
+            </div>
+
+        {% endif %}
+
+    </div>
+</section>
+{% endblock %}

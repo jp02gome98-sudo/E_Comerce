@@ -1,0 +1,17 @@
+
+{% extends "Base.html" %}
+
+{% block title %}Página no encontrada | Mi Tienda{% endblock %}
+
+{% block content %}
+<section class="seccion">
+    <div class="contenedor carrito-vacio">
+        <h1>¡Ups! Página no encontrada</h1>
+        <p>Lo sentimos, la página que buscas no existe o fue movida.</p>
+
+        <a href="{{ url_for('main.index') }}" class="agregar">
+            Volver a la tienda
+        </a>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,63 @@
+
+{% extends "Base.html" %}
+
+{% block title %}Detalles del producto | Mi Tienda{% endblock %}
+
+{% block content %}
+<section class="seccion">
+    <div class="contenedor">
+
+        <div class="encabezado-seccion">
+            <h1>Detalles del producto</h1>
+        </div>
+
+        <div class="producto">
+            <div class="producto-foto">
+                {% if product.image %}
+                    <img
+                        src="{{ url_for('static', filename='img/' + product.image) }}"
+                        alt="{{ product.name }}">
+                {% else %}
+                    <div class="imagen-placeholder">🛍️</div>
+                {% endif %}
+            </div>
+
+            <div class="producto-info">
+                <span class="categoria">{{ product.category }}</span>
+
+                <h2>{{ product.name }}</h2>
+
+                <p>{{ product.description }}</p>
+
+                <p class="precio">
+                    ${{ "{:,.0f}".format(product.price) }}
+                </p>
+
+                <p class="inventario">
+                    Disponibles: {{ product.stock }}
+                </p>
+
+                {% if product.stock > 0 %}
+                    <form
+                        action="{{ url_for('main.agregar_carrito', product_id=product.id) }}"
+                        method="POST">
+
+                        <button type="submit" class="agregar">
+                            Agregar al carrito
+                        </button>
+                    </form>
+                {% else %}
+                    <p>Producto agotado.</p>
+                {% endif %}
+
+                <p>
+                    <a href="{{ url_for('main.index') }}#productos">
+                        Volver a los productos
+                    </a>
+                </p>
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}
